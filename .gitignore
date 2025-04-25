@@ -1,0 +1,6 @@
+node_modules
+*.dockerfile
+*.dockerignore
+*.Identifier
+*.pem
+/dist
