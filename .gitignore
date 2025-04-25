@@ -4,3 +4,4 @@ node_modules
 *.Identifier
 *.pem
 /dist
+.env
