@@ -5,13 +5,14 @@ import socketIO from 'socket.io';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { SocketClass } from './classes/socket.class';
 
 // Cargar variables de entorno
 dotenv.config();
 
 // Validar variables de entorno
 const PORT = parseInt(process.env.PORT || '3003', 10);
-const ENV = process.env.ENV || 'PROD';
+const ENV = process.env.ENV || 'DEV';
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(',') || []; // e.g., "https://frontend.com,https://another.com" in .env
 
 class Server {
@@ -30,10 +31,10 @@ class Server {
         credentials: true,
       },
     });
+    SocketClass.escucharSocket(this.io); //Inicializar el socket
 
     this.configureMiddleware();
     this.configureRoutes();
-    this.configureSocketIO();
     this.configureErrorHandling();
   }
 
@@ -78,14 +79,14 @@ class Server {
     });
   }
 
-  private configureSocketIO() {
+  /* private configureSocketIO() {
     this.io.on('connection', (socket) => {
       console.log('Socket conectado:', socket.id);
       socket.on('disconnect', () => {
         console.log('Socket desconectado:', socket.id);
       });
     });
-  }
+  } */
 
   private configureErrorHandling() {
     this.app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
