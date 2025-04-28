@@ -11,7 +11,96 @@ export const SocketClass = new (class SocketClass {    constructor() {}
 
             socket.on("primeraConexion", (payload=null) => {
                 // console.log("Primera conexión:", payload);
-                socket.emit('actualizacionFila', {} as any);
+                socket.emit('actualizacionFila', {
+                    pendientesArray:[
+                        {
+                          "id": "P001",
+                          "nombre": "Juan Pérez",
+                          "rut": "12345678-9",
+                          "numeroTurno": "A001",
+                          "motivo": "Consulta general",
+                          "prioridad": "Media",
+                          "horaRegistro": "2025-04-28T08:00:00",
+                          "estado": "En espera",
+                          "consultorio": "Consultorio 1",
+                          "medico": "Dr. García",
+                          "tiempoEsperaEstimado": "30 minutos",
+                          "posicionFila": 1
+                        },
+                        {
+                          "id": "P002",
+                          "nombre": "María López",
+                          "rut": "98765432-1",
+                          "numeroTurno": "A002",
+                          "motivo": "Control crónico",
+                          "prioridad": "Alta",
+                          "horaRegistro": "2025-04-28T08:05:00",
+                          "estado": "En espera",
+                          "consultorio": "Consultorio 2",
+                          "medico": "Dra. Fernández",
+                          "tiempoEsperaEstimado": "15 minutos",
+                          "posicionFila": 2
+                        },
+                        {
+                          "id": "P003",
+                          "nombre": "Carlos Gómez",
+                          "rut": "45678912-3",
+                          "numeroTurno": "A003",
+                          "motivo": "Urgencia",
+                          "prioridad": "Alta",
+                          "horaRegistro": "2025-04-28T08:10:00",
+                          "estado": "Llamado",
+                          "consultorio": "Consultorio 1",
+                          "medico": "Dr. García",
+                          "tiempoEsperaEstimado": "0 minutos",
+                          "posicionFila": 0
+                        }
+                      ],
+                    enProcesoArray:[
+                        {
+                          "id": "P001",
+                          "nombre": "Juan Pérez",
+                          "rut": "12345678-9",
+                          "numeroTurno": "A007",
+                          "motivo": "Consulta general",
+                          "prioridad": "Media",
+                          "horaRegistro": "2025-04-28T08:00:00",
+                          "estado": "En espera",
+                          "consultorio": "Consultorio 1",
+                          "medico": "Dr. García",
+                          "tiempoEsperaEstimado": "30 minutos",
+                          "posicionFila": 1
+                        },
+                        {
+                          "id": "P002",
+                          "nombre": "María López",
+                          "rut": "98765432-1",
+                          "numeroTurno": "A006",
+                          "motivo": "Control crónico",
+                          "prioridad": "Alta",
+                          "horaRegistro": "2025-04-28T08:05:00",
+                          "estado": "En espera",
+                          "consultorio": "Consultorio 2",
+                          "medico": "Dra. Fernández",
+                          "tiempoEsperaEstimado": "15 minutos",
+                          "posicionFila": 2
+                        },
+                        {
+                          "id": "P003",
+                          "nombre": "Carlos Gómez",
+                          "rut": "45678912-3",
+                          "numeroTurno": "A009",
+                          "motivo": "Urgencia",
+                          "prioridad": "Alta",
+                          "horaRegistro": "2025-04-28T08:10:00",
+                          "estado": "Llamado",
+                          "consultorio": "Consultorio 1",
+                          "medico": "Dr. García",
+                          "tiempoEsperaEstimado": "0 minutos",
+                          "posicionFila": 0
+                        }
+                      ]
+                } as any);
             });
 
             socket.on("disconnect", () => {
@@ -19,4 +108,4 @@ export const SocketClass = new (class SocketClass {    constructor() {}
             });
         });
     }
-})();
+});

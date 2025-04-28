@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { SocketClass } from './classes/socket.class';
+import mongoose from 'mongoose';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -13,7 +14,8 @@ dotenv.config();
 // Validar variables de entorno
 const PORT = parseInt(process.env.PORT || '3003', 10);
 const ENV = process.env.ENV || 'DEV';
-const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(',') || []; // e.g., "https://frontend.com,https://another.com" in .env
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://benjapob:3Jg8DabbPwte72cg@cluster0.89ylq5s.mongodb.net/fila-virtual?retryWrites=true&w=majority';
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(',') || []; // ej., "https://frontend.com,https://another.com" en .env
 
 class Server {
   public app: express.Application;
@@ -35,6 +37,7 @@ class Server {
 
     this.configureMiddleware();
     this.configureRoutes();
+    this.configureDB();
     this.configureErrorHandling();
   }
 
@@ -74,21 +77,21 @@ class Server {
   }
 
   private configureRoutes() {
+    // Aquí puedes agregar tus rutas
     this.app.get('/', (req: Request, res: Response) => {
       res.send('Hello World!');
     });
   }
 
-  /* private configureSocketIO() {
-    this.io.on('connection', (socket) => {
-      console.log('Socket conectado:', socket.id);
-      socket.on('disconnect', () => {
-        console.log('Socket desconectado:', socket.id);
-      });
-    });
-  } */
+  private configureDB() {
+    // Aquí puedes configurar tu conexión a la base de datos, por ejemplo, MongoDB
+    mongoose.connect(MONGO_URI)
+      .then(() => console.log('MongoDB connected'))
+      .catch((err) => console.error('MongoDB connection error:', err));    
+  }
 
   private configureErrorHandling() {
+    // Manejo de errores
     this.app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
       console.error(err.stack);
       res.status(500).send('Error en el sistema');
@@ -100,6 +103,7 @@ class Server {
   }
 
   public start() {
+    // Iniciar el servidor
     this.httpServer.listen(this.port, () => {
       console.log(`Server listening on port ${this.port}`);
     });
@@ -107,6 +111,5 @@ class Server {
   }
 }
 
-// Start the server
 const server = new Server();
 server.start();
