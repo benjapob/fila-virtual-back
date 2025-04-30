@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { SocketClass } from './classes/socket.class';
 import mongoose from 'mongoose';
+import Turno from './models/turno.model';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -14,7 +15,7 @@ dotenv.config();
 // Validar variables de entorno
 const PORT = parseInt(process.env.PORT || '3003', 10);
 const ENV = process.env.ENV || 'DEV';
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://benjapob:3Jg8DabbPwte72cg@cluster0.89ylq5s.mongodb.net/fila-virtual?retryWrites=true&w=majority';
+const MONGO_URI = process.env.MONGO_URI || '';
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(',') || []; // ej., "https://frontend.com,https://another.com" en .env
 
 class Server {
@@ -78,8 +79,13 @@ class Server {
 
   private configureRoutes() {
     // Aquí puedes agregar tus rutas
-    this.app.get('/', (req: Request, res: Response) => {
-      res.send('Hello World!');
+    this.app.get('/turnos', (req: Request, res: Response) => {
+      Turno.find({}).then((turnos) => {
+        res.json({ ok: true, turnos });
+      }).catch((err) => {
+        console.error(err);
+        res.status(500).json({ ok: false, error: 'Error al obtener los turnos' });
+      });
     });
   }
 

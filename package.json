@@ -4,7 +4,7 @@
   "description": "Backend para fila virtual usando Express, Socket y Mongoose",
   "main": "index.ts",
   "scripts": {
-    "dev": "ts-node-dev index.ts"
+    "dev": "ts-node-dev index.ts --port 3003"
   },
   "author": "Benjamin Poblete",
   "license": "ISC",
