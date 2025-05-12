@@ -23,6 +23,7 @@ const TurnoSchema = new Schema({
         type: String,
         enum: ['En espera', 'En atención', 'Finalizado', 'Cancelado'],
         required: true,
+        default: 'En espera'
     },
     consultorio: {
         type: String,
@@ -33,8 +34,7 @@ const TurnoSchema = new Schema({
         required: true,
     },
     usuario: {
-        type: Types.ObjectId,
-        ref: 'users',
+        type: String,
         required: true,
     },
 });
