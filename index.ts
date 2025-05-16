@@ -80,8 +80,8 @@ class Server {
 
   private configureRoutes() {
     // Aquí puedes agregar tus rutas
-    this.app.get('/turnos', (req: Request, res: Response) => {
-      Turno.find({}).then((turnos) => {
+    this.app.get('/getTurnos', (req: Request, res: Response) => {
+      Turno.find({estado:{$ne:'Cancelado'}}).then((turnos) => {
         res.json({ ok: true, turnos });
       }).catch((err) => {
         console.error(err);
@@ -90,7 +90,7 @@ class Server {
     });
 
     
-    this.app.post('/turnos', (req: Request, res: Response) => {
+    this.app.post('/createTurno', (req: Request, res: Response) => {
       try {
         let inicioDia = moment().startOf('day').toDate();
         let finDia = moment().endOf('day').toDate();
@@ -112,7 +112,7 @@ class Server {
             medico: req.body.medico,
             paciente: req.body.paciente
           }).then((turno) => {
-            this.io.emit('nuevoTurno', turno);
+            SocketClass.updateFilaVirtual(this.io);
             res.json({ ok: true, turno });
           }).catch((err) => {
             console.error(err);
@@ -121,6 +121,26 @@ class Server {
         });
       } catch (error) {
         console.error(error);        
+      }
+    });
+    
+    this.app.post('/deleteTurno', (req: Request, res: Response) => {
+      try {
+        Turno.findOneAndUpdate({_id:req.body.id}, {$set:{estado:'Cancelado'}}, {new:true}).then((turno) => {
+          if (turno) {
+            res.json({ ok: true, turno});
+            SocketClass.updateFilaVirtual(this.io);
+          } else {
+            res.json({ ok: false, error: 'Error al actualizar turno' });
+          }
+        }).catch((err) => {
+          console.error(err);
+          res.json({ ok: false, error: 'Error al actualizar turno' });
+        });
+        
+      } catch (error) {
+          console.error(error);
+          res.json({ ok: false, error: 'Error al actualizar turno' });
       }
     });
   }
