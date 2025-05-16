@@ -33,7 +33,7 @@ const TurnoSchema = new Schema({
         type: String,
         required: true,
     },
-    usuario: {
+    paciente: {
         type: String,
         required: true,
     },

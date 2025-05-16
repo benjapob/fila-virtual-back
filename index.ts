@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import http from 'http';
 import cors from 'cors';
+import moment from 'moment';
 import socketIO from 'socket.io';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
@@ -84,8 +85,43 @@ class Server {
         res.json({ ok: true, turnos });
       }).catch((err) => {
         console.error(err);
-        res.status(500).json({ ok: false, error: 'Error al obtener los turnos' });
+        res.json({ ok: false, error: 'Error al obtener los turnos' });
       });
+    });
+
+    
+    this.app.post('/turnos', (req: Request, res: Response) => {
+      try {
+        let inicioDia = moment().startOf('day').toDate();
+        let finDia = moment().endOf('day').toDate();
+        let numeroTurno:string = '1';
+        Turno.find({createdAt:{$gt:inicioDia, $lt: finDia}}).sort({createdAt:1}).then((turnos) => {
+          if (turnos.length > 0) {
+            
+            const ultimoTurno = turnos[turnos.length - 1];
+            const nuevoNumeroTurno = parseInt(ultimoTurno.numeroTurno) + 1;
+            numeroTurno = nuevoNumeroTurno.toString();
+          } 
+
+          Turno.create({
+            numeroTurno,
+            motivo: req.body.motivo,
+            prioridad: req.body.prioridad,
+            horaRegistro: new Date(),
+            consultorio: req.body.consultorio,
+            medico: req.body.medico,
+            paciente: req.body.paciente
+          }).then((turno) => {
+            this.io.emit('nuevoTurno', turno);
+            res.json({ ok: true, turno });
+          }).catch((err) => {
+            console.error(err);
+            res.json({ ok: false, error: 'Error al crear el turno' });
+          });
+        });
+      } catch (error) {
+        console.error(error);        
+      }
     });
   }
 
