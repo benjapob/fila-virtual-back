@@ -143,6 +143,43 @@ class Server {
           res.json({ ok: false, error: 'Error al actualizar turno' });
       }
     });
+
+    this.app.post('/updateTurno', (req: Request, res: Response) => {
+      try {
+        let estado:string;
+        switch (req.body.estado) {
+          case 'espera':
+            estado = 'En espera'
+            break;
+          case 'atencion':
+            estado = 'En atención'
+            
+            break;
+          case 'finalizado':
+            estado = 'Finalizado'
+            
+            break;
+          default:
+            estado = 'En espera'
+            break;
+        }
+        Turno.findOneAndUpdate({_id:req.body.id}, {$set:{estado:estado}}, {new:true}).then((turno) => {
+          if (turno) {
+            res.json({ ok: true, turno});
+            SocketClass.updateFilaVirtual(this.io);
+          } else {
+            res.json({ ok: false, error: 'Error al actualizar turno' });
+          }
+        }).catch((err) => {
+          console.error(err);
+          res.json({ ok: false, error: 'Error al actualizar turno' });
+        });
+        
+      } catch (error) {
+          console.error(error);
+          res.json({ ok: false, error: 'Error al actualizar turno' });
+      }
+    });
   }
 
   private configureDB() {
