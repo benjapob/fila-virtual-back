@@ -14,13 +14,21 @@ export const SocketClass = new (class SocketClass {    constructor() {}
     }
 
     public async updateFilaVirtual(io:any) {
-      let inicioDia = moment().startOf('day').toDate();
-      let finDia = moment().endOf('day').toDate();
-      let pendientesArray:any = await Turno.find({estado:'En espera', createdAt:{$gt:inicioDia, $lt: finDia}});
-      let enProcesoArray:any = await Turno.find({estado:'En atención', createdAt:{$gt:inicioDia, $lt: finDia}});
-      io.emit('actualizacionFila', {
-          pendientesArray,
-          enProcesoArray
-      } as any);
+        try {
+            let inicioDia = moment().startOf('day').toDate();
+            let finDia = moment().endOf('day').toDate();
+            let pendientesArray:any = await Turno.find({estado:'En espera', createdAt:{$gt:inicioDia, $lt: finDia}});
+            let enProcesoArray:any = await Turno.find({estado:'En atención', createdAt:{$gt:inicioDia, $lt: finDia}});
+            io.emit('actualizacionFila', {
+                pendientesArray,
+                enProcesoArray
+            } as any);
+        } catch (error) {
+            //console.error("Error al actualizar la fila virtual:", error);
+            io.emit('actualizacionFila', {
+                pendientesArray: [],
+                enProcesoArray: []
+            } as any);
+        }
     }
 });
